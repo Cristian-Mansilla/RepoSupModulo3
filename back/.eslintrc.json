@@ -1,0 +1,12 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "rules": {
+    //agregar acá las reglas personalizadas que desee
+    "no-var": "error",
+    "prefer-const": "error",
+    "no-console": "warn",
+    "semi": ["error", "always"]
+  }
+}
