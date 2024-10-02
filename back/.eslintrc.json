@@ -4,9 +4,9 @@
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "rules": {
     //agregar acá las reglas personalizadas que desee
-    "no-var": "error",
-    "prefer-const": "error",
-    "no-console": "warn",
-    "semi": ["error", "always"]
+    "no-var": "error",  //? Prohibe el uso de 'var' recomendando otras opciones de declaracion
+    "prefer-const": "warn", //? Recomienda el uso de 'const' a la hora de declarar variables
+    "no-console": "warn", //? Prohibe el uso de 'console.log()' para evitarlos en produccion
+    "semi": ["error", "always"] //? Controla el uso del punto y coma al final de las declaraciones
   }
 }

@@ -14,7 +14,8 @@
   "scripts": {
     "start": "nodemon",
     "build": "npx tsc",
-    "lint": "eslint . --ext .ts"
+    "lint1": "eslint . --ext .ts",
+    "lint": "eslint './src/**/*.ts'"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

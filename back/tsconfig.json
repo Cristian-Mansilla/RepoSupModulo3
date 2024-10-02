@@ -107,7 +107,7 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/**/*.ts"],   //cuando se ejecute el script "build", TS tendra en cuenta los modulos especificados en el array
-  "exclude": ["node_modules"],  //TS no tendra en cuenta los modulos especificados por la propiedad "exclude"
-  // "files": ["./src/index.ts"]   //solo leera los archivo especificados en el array y no a otros.
+  "include": ["src/**/*.ts"],   //?cuando se ejecute el script "build", TS tendra en cuenta los modulos especificados en el array
+  "exclude": ["node_modules"],  //?TS no tendra en cuenta los modulos especificados por la propiedad "exclude"
+  // "files": ["./src/index.ts"]   //?solo leera los archivo especificados en el array y no a otros.
 }
