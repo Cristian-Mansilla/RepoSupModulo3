@@ -1,7 +1,8 @@
-var nombre = "cris";
+import server from "./server";
+import { PORT } from "./config/envs";
 
-function miFuncion() {
-  return 2 + 3;
-};
+//! PONEMOS AL SERVIDOR A LA ESCUCHA EN PUERTO 4040 || 3000 POR DEFECTO
 
-console.log(nombre)
+server.listen(PORT, () => {
+  console.log(`Servidor escuchando en puerto ${PORT}`);
+})

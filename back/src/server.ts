@@ -1,13 +1,11 @@
-const express = require("express");
+import express from "express";
+import router from "./routes";
+
+//! LAVANTO EL SERVIDOR Y ESTE USARA LA RUTA DEFINIDA EN "ROUTER"
+
 const server = express();
-require("dotenv").config(); //permite que las variables de entorno esten disponibles para utilizar
 
-const PORT = process.env.PORT || 3000;
+server.use(express.json());
+server.use(router);
 
-server.listen(PORT, (req : Request, res : Response) => {
-    console.log( `Servidor escuchando en puerto ${PORT}`)
-});
-
-module.exports = {
-    server
-}
+export default server; //? solo se exporta el servidor de express
