@@ -1,17 +1,12 @@
-import { Request, Response, Router } from "express";
-import { createUser, getUsers, deleteUser } from "../controllers/ctrl_Users";
+import { Router } from "express";
+import usersRouter from "./users.routes";
+import appointmentsRouter from "./appointments.routes";
 
-//! LA RUTA ANALIZA HACIA DONDE SE REALIZA UNA SOLICITUD HTTP, EN ESTE CASO
-//! DE TIPO GET A "/", Y RESPONDE CON LA FUNCION CALLBACK...
+//! LA RUTA ANALIZA HACIA DONDE SE REALIZA UNA SOLICITUD HTTP, SI ES A "/USERS" O A "/APPOINTMENTS"
 
 const router: Router = Router();
 
-router.get("/users", getUsers);
-
-router.post("/users", createUser);
-
-router.delete("/", (req: Request, res: Response) => {});
-
-router.get("/algo");
+router.use("/users", usersRouter);
+router.use("/appointments", appointmentsRouter);
 
 export default router;
