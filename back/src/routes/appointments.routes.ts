@@ -5,7 +5,9 @@
 // PUT /appointments/cancel => Cambiar el estatus de un turno a “cancelled”.
 
 import { Router } from "express";
-import { getsAppointments, addAppointment, getAppointmentById, cancelAppointment } from "../controllers/appointments.controllers";
+import { getsAppointments, getAppointmentById, cancelAppointment, createdAppointment } from "../controllers/appointments.controllers";
+import { validateUserId } from "../middlewares/validateUserId";
+import { validateAppointmentId } from "../middlewares/validateAppointmentId";
 
 const router : Router = Router();
 
@@ -13,8 +15,8 @@ router.get("/", getsAppointments);
 
 router.get("/:id", getAppointmentById);
 
-router.post("/schedule", addAppointment);
+router.post("/schedule", validateUserId, createdAppointment);
 
-router.put("/cancel/:id", cancelAppointment);
+router.put("/cancel/:id", validateAppointmentId, cancelAppointment);
 
 export default router;

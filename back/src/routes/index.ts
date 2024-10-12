@@ -2,7 +2,7 @@ import { Router } from "express";
 import usersRouter from "./users.routes";
 import appointmentsRouter from "./appointments.routes";
 
-//! LA RUTA ANALIZA HACIA DONDE SE REALIZA UNA SOLICITUD HTTP, SI ES A "/USERS" O A "/APPOINTMENTS"
+//! LA RUTA PRINCIPAL ANALIZA HACIA DONDE SE REALIZA UNA SOLICITUD HTTP, SI ES A "/USERS" O A "/APPOINTMENTS"
 
 const router: Router = Router();
 

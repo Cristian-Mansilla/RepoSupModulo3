@@ -2,7 +2,7 @@
 
 import IUser from "../interfaces/IUser";
 
-export const db_users: IUser[] = [];
+export const usersDB: IUser[] = [];
 
 let id: number = 1;
 export const getId = () => id;

@@ -2,7 +2,7 @@ import express from "express";
 import routers from "./routes";
 import morgan from "morgan";
 
-//! LAVANTO EL SERVIDOR Y ESTE USARA LA RUTA DEFINIDA EN "ROUTER"
+//! CONFIGURACION DEL SERVIDOR
 
 const server = express();
 
