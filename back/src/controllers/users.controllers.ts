@@ -6,15 +6,16 @@ import {
   loginSVC,
   deleteUserByIdSVC,
 } from "../services/users.services";
-import IUser from "../interfaces/IUser";
+import { User } from "../entities/User";
+// import IUser from "../interfaces/IUser";
 
 export const getUsers = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
-    const usersDB: IUser[] = await getUsersSVC();
-    return res.status(200).json(usersDB);
+    const users: User[] = await getUsersSVC();
+    return res.status(200).json(users);
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -30,7 +31,7 @@ export const registerUser = async (
 ): Promise<Response> => {
   try {
     const { name, email, birthdate, nDni, username, password } = req.body;
-    const newUser: IUser = await registerUserSVC({ name, email, birthdate, nDni, username, password });
+    const newUser: User = await registerUserSVC({ name, email, birthdate, nDni, username, password });
     return res.status(201).json(newUser);
   } catch (error) {
     console.log(error);
@@ -59,10 +60,10 @@ export const deleteUserById = async (
   }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (req: Request, res: Response): Promise<Response> => {
   try {
     const id = Number(req.params.id);
-    const user = await getUserByIdSVC(id);
+    const user: User | null = await getUserByIdSVC(id);
     return res.status(200).json(user);
   }
   catch (error) {

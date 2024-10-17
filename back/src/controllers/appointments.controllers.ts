@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import { getAllAppointmentsSVC, getAppointmentByIdSVC, createAppointmentSVC, cancelAppointmentSVC } from "../services/appointments.services";
-import IAppointment from "../interfaces/IAppointment";
+import { Appointment } from "../entities/Appointment";
+// import IAppointment from "../interfaces/IAppointment";
 
 export const getsAppointments = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
-    const appointmentsDB: IAppointment[] = await getAllAppointmentsSVC();  
-    return res.status(200).json(appointmentsDB);
+    const appointments: Appointment[] = await getAllAppointmentsSVC();  
+    return res.status(200).json(appointments);
   } catch (error) {
     return res.status(404).json({
       message: "❌ No se encontro ningun turno agendado.",
@@ -20,7 +21,7 @@ export const getsAppointments = async (
 export const getAppointmentById = async (req: Request, res: Response): Promise<Response> => {
   const id = Number(req.params.id);
   try {
-    const appointment: IAppointment = await getAppointmentByIdSVC(id);
+    const appointment: Appointment = await getAppointmentByIdSVC(id);
     return res.status(200).json(appointment);
   } catch (error) {
     return res.status(400).json({
@@ -33,7 +34,7 @@ export const getAppointmentById = async (req: Request, res: Response): Promise<R
 export const createdAppointment = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { userId, service, date, time } = req.body;
-    const newAppointment = await createAppointmentSVC({userId, service, date, time})
+    const newAppointment: Appointment = await createAppointmentSVC({userId, service, date, time})
     return res.status(201).json(newAppointment);
   } catch (error) {
     return res.status(400).json({

@@ -15,8 +15,8 @@ router.get("/", getsAppointments);
 
 router.get("/:id", getAppointmentById);
 
-router.post("/schedule", validateUserId, createdAppointment);
+router.post("/schedule", createdAppointment);
 
-router.put("/cancel/:id", validateAppointmentId, cancelAppointment);
+router.put("/cancel/:id", cancelAppointment);
 
 export default router;

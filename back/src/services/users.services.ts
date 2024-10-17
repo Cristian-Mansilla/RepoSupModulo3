@@ -2,24 +2,54 @@
 
 //todo [1] - Implementar una función que pueda retornar el arreglo completo de usuarios.
 
-//todo [2] - Implementar una función que pueda retornar un elemento del arreglo que haya sido identificado 
+//todo [2] - Implementar una función que pueda retornar un elemento del arreglo que haya sido identificado
 //todo     - por id.
 
-//todo [3] - Implementar una función que pueda crear un nuevo usuario dentro del arreglo PERO ten en cuenta 
-//todo     - que al momento de crear el usuario, debe crear su correspondiente par de credenciales llamando 
-//todo     - a la función correspondiente del servicio de credenciales. Al recibir de esta función el id de 
+//todo [3] - Implementar una función que pueda crear un nuevo usuario dentro del arreglo PERO ten en cuenta
+//todo     - que al momento de crear el usuario, debe crear su correspondiente par de credenciales llamando
+//todo     - a la función correspondiente del servicio de credenciales. Al recibir de esta función el id de
 //todo     - las credenciales, debe guardar el dato en la propiedad credentialsId.
 
-import IUser from "../interfaces/IUser";
+import { UserModel } from "../config/data-source";
+import { User } from "../entities/User";
 import UserDTO from "../interfaces/dto/UserDTO";
-import { usersDB, getId, incrementId } from "../utils/DB_USER";
 import { createCredential } from "./credentials.services";
+// import IUser from "../interfaces/IUser";
+// import { usersDB, getId, incrementId } from "../utils/DB_USER";
 
-export const getUsersSVC = async (): Promise<IUser[]> => {
-  return usersDB;
+//! servicio para obtener todos los usuarios con sus credenciales
+export const getUsersSVC = async (): Promise<User[]> => {
+  const users: User[] = await UserModel.find({
+    relations: { credential: true }
+  });
+  return users;
 };
 
-export const registerUserSVC = async (userData: UserDTO): Promise<IUser> => {
+export const registerUserSVC = async (
+  userData: UserDTO
+): Promise<User> => {
+  if (
+    userData.name ||
+    userData.email ||
+    userData.nDni ||
+    userData.birthdate ||
+    userData.username ||
+    userData.password
+  ) {
+    const user: User = await UserModel.create({
+      name: userData.name,
+      email: userData.email,
+      active: true,
+      nDni: Number(userData.nDni),
+      birthdate: new Date(userData.birthdate),
+      credential: await createCredential(userData.username, userData.password)
+    });
+    const result = await UserModel.save(user);
+    return result;
+  } else throw new Error (`Faltan datos`);
+
+  //! LOGICA PARA LA BD LOCAL
+  /*
   const newUser: IUser = {
     id: getId(),
     name: userData.name,
@@ -27,14 +57,17 @@ export const registerUserSVC = async (userData: UserDTO): Promise<IUser> => {
     active: true,
     birthdate: userData.birthdate,
     nDni: userData.nDni,
-    credentialsId: createCredential(userData.username, userData.password)
+    credentialsId: await createCredential(userData.username, userData.password)
   };
   usersDB.push(newUser);
   incrementId();
   return newUser;
+  */
 };
 
 export const deleteUserByIdSVC = async (id: number): Promise<void> => {
+  //! LOGICA PARA DB LOCAL
+  /*
   const userIndex = usersDB.findIndex((user: IUser) => user.id === id);    //findIndex busca el primer indice que tenga un id que cohincida con la propiedad id de un usuario  
   if (userIndex !== -1) {                                                   //si lo encontro retorna la posicion que ocupa el usuario en el array, sino retorna -1 y se lanza un error
     usersDB.splice(userIndex, 1);
@@ -42,15 +75,26 @@ export const deleteUserByIdSVC = async (id: number): Promise<void> => {
   else {
     throw new Error(`Usuario con id ${id} no encontrado`);
   };
+  */
 };
 
-export const getUserByIdSVC = async (id: number): Promise<IUser> => {
+export const getUserByIdSVC = async (id: number): Promise<User | null> => {
+  const user: User | null = await UserModel.findOne({
+    where: {id},
+    relations: { credential: true, appointments: true }
+  });
+  if (!user) throw new Error(`Usuario con id ${id} no encontrado`);
+  return user;
+
+  //! LOGICA PARA DB LOCAL
+  /*
   const user = usersDB.find((user: IUser) => {
     return user.id == id;
   });
   if (!user)
     throw new Error(`Usuario con id ${id} no encontrado`);
   return user;
+  */
 };
 
 export const loginSVC = async () => {};
