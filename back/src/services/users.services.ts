@@ -66,6 +66,10 @@ export const registerUserSVC = async (
 };
 
 export const deleteUserByIdSVC = async (id: number): Promise<void> => {
+  const findUser = await UserModel.findOneBy({ id });
+  if( findUser ) await UserModel.remove(findUser)
+  else throw new Error (`El usuario que quiere borrar no se encuentra`);
+  
   //! LOGICA PARA DB LOCAL
   /*
   const userIndex = usersDB.findIndex((user: IUser) => user.id === id);    //findIndex busca el primer indice que tenga un id que cohincida con la propiedad id de un usuario  
