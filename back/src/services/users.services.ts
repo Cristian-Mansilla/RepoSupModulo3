@@ -10,7 +10,7 @@
 //todo     - a la función correspondiente del servicio de credenciales. Al recibir de esta función el id de
 //todo     - las credenciales, debe guardar el dato en la propiedad credentialsId.
 
-import { UserModel } from "../config/data-source";
+import { CredentialModel, UserModel } from "../config/data-source";
 import { User } from "../entities/User";
 import UserDTO from "../interfaces/dto/UserDTO";
 import { createCredential } from "./credentials.services";
@@ -20,7 +20,7 @@ import { createCredential } from "./credentials.services";
 //! servicio para obtener todos los usuarios con sus credenciales
 export const getUsersSVC = async (): Promise<User[]> => {
   const users: User[] = await UserModel.find({
-    relations: { credential: true }
+    relations: { credential: true, appointments: true }
   });
   return users;
 };
@@ -36,20 +36,22 @@ export const registerUserSVC = async (
     userData.username ||
     userData.password
   ) {
-    const user: User = await UserModel.create({
+    const newCredential = await createCredential(userData.username, userData.password);
+    const newUser: User = UserModel.create({
       name: userData.name,
       email: userData.email,
       active: true,
       nDni: Number(userData.nDni),
       birthdate: new Date(userData.birthdate),
-      credential: await createCredential(userData.username, userData.password)
+      credential: newCredential
     });
-    const result = await UserModel.save(user);
+    newCredential.user = newUser; // Implica que la tabla Credential en su columna "user" guarde la relacion con el nuevo usuario creado
+    await CredentialModel.save(newCredential);
+    const result = await UserModel.save(newUser);
     return result;
   } else throw new Error (`Faltan datos`);
 
-  //! LOGICA PARA LA BD LOCAL
-  /*
+  /* //! LOGICA PARA LA BD LOCAL
   const newUser: IUser = {
     id: getId(),
     name: userData.name,
@@ -70,8 +72,7 @@ export const deleteUserByIdSVC = async (id: number): Promise<void> => {
   if( findUser ) await UserModel.remove(findUser)
   else throw new Error (`El usuario que quiere borrar no se encuentra`);
   
-  //! LOGICA PARA DB LOCAL
-  /*
+  /* //! LOGICA PARA DB LOCAL
   const userIndex = usersDB.findIndex((user: IUser) => user.id === id);    //findIndex busca el primer indice que tenga un id que cohincida con la propiedad id de un usuario  
   if (userIndex !== -1) {                                                   //si lo encontro retorna la posicion que ocupa el usuario en el array, sino retorna -1 y se lanza un error
     usersDB.splice(userIndex, 1);
@@ -85,13 +86,12 @@ export const deleteUserByIdSVC = async (id: number): Promise<void> => {
 export const getUserByIdSVC = async (id: number): Promise<User | null> => {
   const user: User | null = await UserModel.findOne({
     where: {id},
-    relations: { credential: true, appointments: true }
+    relations: { credential: true, appointments: true } // otra forma: relations: ["appointments"];
   });
   if (!user) throw new Error(`Usuario con id ${id} no encontrado`);
   return user;
 
-  //! LOGICA PARA DB LOCAL
-  /*
+  /* //! LOGICA PARA DB LOCAL
   const user = usersDB.find((user: IUser) => {
     return user.id == id;
   });

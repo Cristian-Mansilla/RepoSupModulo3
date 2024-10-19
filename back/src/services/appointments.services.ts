@@ -49,7 +49,8 @@ export const createAppointmentSVC = async (
       where: { id: appointmentDATA.userId },
     });
     if (!findUser || findUser == null) throw new Error(`Usuario no encontrado`);
-    const newAppointment: Appointment = await AppointmentModel.create({
+    
+    const newAppointment: Appointment = AppointmentModel.create({
       user: findUser,
       time: appointmentDATA.time,
       status: appointmentsStatus.ACTIVE,

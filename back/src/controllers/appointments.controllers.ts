@@ -39,7 +39,7 @@ export const createdAppointment = async (req: Request, res: Response): Promise<R
   } catch (error) {
     return res.status(400).json({
       message:"❌ No se pudo agendar el turno solicitado",
-      error
+      error: (error as Error).message
     })
   }
 };
@@ -54,7 +54,7 @@ export const cancelAppointment = async (req: Request, res: Response): Promise<Re
   } catch (error) {
     return res.status(400).json({
       message:`❌ No hay ningun turno agendado para el id ${id}`,
-      error
+      error: (error as Error).message
     })
   }
 };

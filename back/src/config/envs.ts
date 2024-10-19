@@ -1,6 +1,5 @@
 import "dotenv/config";
 export const PORT = process.env.PORT || 3000;
-export const DB_TYPE = process.env.DB_TYPE;
 export const DB_HOST = process.env.DB_HOST;
 export const DB_PORT = process.env.DB_PORT;
 export const DB_USERNAME = process.env.DB_USERNAME;

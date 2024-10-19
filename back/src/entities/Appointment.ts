@@ -8,12 +8,17 @@ export class Appointment {
   id: number;
   @Column()
   service: string;
-  @Column()
+  @Column({ type: "date" })
   date: Date;
   @Column()
   time: string;
-  @Column()
+  @Column({ 
+    type: "enum",
+    enum: appointmentsStatus
+   })
   status: appointmentsStatus;
+  
+   //! RELACION A LA ENTIDAD USER
   @ManyToOne(() => User, (user) => user.appointments)
   user: User;
 }

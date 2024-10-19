@@ -16,13 +16,17 @@ export class User {
   email: string;
   @Column({default: true})
   active: boolean;
-  @Column()
+  @Column({type: "date"})
   birthdate: Date;
   @Column({unique: true})
   nDni: number;
-  @OneToOne(() => Credential) // La entidad User va a tener una relacion uno a uno con la entidad Credential
-  @JoinColumn() // Indica que la entidad User contendra la clave foranea hacia Credential
-  credential: Credential  // propiedad 'credential' del tipo de dato Credential
-  @OneToMany(() => Appointment, (appointments) => appointments.user)
+
+  //! RELACION HACIA CREDENTIALS
+  @OneToOne(() => Credential, (credential) => credential.user, {cascade: true, onDelete: "CASCADE"}) // La entidad User va a tener una relacion uno a uno con la entidad Credential
+  @JoinColumn() // Indica que la entidad User contendra la clave foranea hacia Credential a traves de la columna credentialId
+  credential: Credential  // TypeORM creara la propiedad 'credentialId' del tipo de dato Credential
+
+  //! RELACION HACIA APPOINTMENTS
+  @OneToMany(() => Appointment, (appointments) => appointments.user, {cascade:true, onDelete: "CASCADE"})
   appointments: Appointment[];
 }

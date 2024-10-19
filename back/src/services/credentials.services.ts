@@ -9,19 +9,19 @@
 
 import { CredentialModel } from "../config/data-source";
 import { Credential } from "../entities/Credential";
-// import ICredential from "../interfaces/ICredential";
 import { CredentialDTO } from "../interfaces/dto/CredentialDTO";
-import { credentialDB, getId, incrementId } from "../utils/DB_CREDENTIAL";
+// import { credentialDB, getId, incrementId } from "../utils/DB_CREDENTIAL";
+// import ICredential from "../interfaces/ICredential";
 
 export const createCredential = async (username: string, password:string): Promise<Credential> => {
-  const newCredential: Credential = await CredentialModel.create({
+  const newCredential: Credential = CredentialModel.create({
     username,
     password
   });
   const result = await CredentialModel.save(newCredential);
   return result;
-  //! LOGICA PARA LA DB LOCAL
-  /*
+  
+  /* //! LOGICA PARA LA DB LOCAL
   const newCredential : ICredential = {
     id: getId(),
     username: username,
@@ -34,6 +34,18 @@ export const createCredential = async (username: string, password:string): Promi
 };
 
 export const checkCredential = async (credentialDATA: CredentialDTO): Promise<number> => {
+  const foundCredential = await CredentialModel.findOne({
+    where: { username: credentialDATA.username }
+  })
+  if (foundCredential) {
+    if (foundCredential.password == credentialDATA.password) {
+      return foundCredential.id
+    }
+    else throw new Error ("Las contraseñas no concuerdan");
+  }
+  else throw new Error("No se encontro un usuario con esas credenciales");
+  
+  /*  //! LOGICA PARA BD LOCAL
   const credentialFound = credentialDB.find(
     (credential) => credentialDATA.username === credential.username
   );
@@ -42,4 +54,5 @@ export const checkCredential = async (credentialDATA: CredentialDTO): Promise<nu
       return credentialFound.id;
     } else throw new Error("Las contraseñas no concuerdan");
   } else throw new Error("No se encontro un usuario con esas credenciales");
+  */
 };
