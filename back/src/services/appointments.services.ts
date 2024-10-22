@@ -12,57 +12,41 @@
 
 import AppointmentDTO from "../interfaces/dto/AppointmentDTO";
 import { appointmentsStatus } from "../utils/enums/appointmentsStatus";
-import { AppointmentModel, UserModel } from "../config/data-source";
 import { Appointment } from "../entities/Appointment";
+import { AppRepo } from "../repositories/AppointmentRepository";
 import { User } from "../entities/User";
+import { UserRepo } from "../repositories/UserRepository";
 // import { appointmentsDB, getId, incrementId } from "../utils/DB_APPOINTMENTS";
 // import IAppointment from "../interfaces/IAppointment";
 
 export const getAllAppointmentsSVC = async (): Promise<Appointment[]> => {
-  const appointments: Appointment[] = await AppointmentModel.find({
-    relations: { user: true },
-  });
-  return appointments;
+  const response: Appointment[] = await AppRepo.allAppointments();
+  return response;
 };
 
 export const getAppointmentByIdSVC = async (
   id: number
-): Promise<Appointment> => {
-  const appointment: Appointment | null = await AppointmentModel.findOne({
-    where: { id },
-    relations: { user: true },
-  });
-  if (!appointment || appointment == null) throw new Error(`Turno con id ${id} no encontrado`);
+): Promise<Appointment | null> => {
+  const appointment: Appointment | null = await AppRepo.appointmentById(id);
   return appointment;
 };
 
 export const createAppointmentSVC = async (
   appointmentDATA: AppointmentDTO
-): Promise<Appointment> => {
+): Promise<Appointment | null> => {
   if (
     appointmentDATA.userId ||
-    appointmentDATA.service ||
     appointmentDATA.date ||
     appointmentDATA.time
   ) {
-    const findUser: User | null = await UserModel.findOne({
-      where: { id: appointmentDATA.userId },
-    });
-    if (!findUser || findUser == null) throw new Error(`Usuario no encontrado`);
-    
-    const newAppointment: Appointment = AppointmentModel.create({
-      user: findUser,
-      time: appointmentDATA.time,
-      status: appointmentsStatus.ACTIVE,
-      date: new Date(appointmentDATA.date),
-      service: appointmentDATA.service,
-    });
-    const result = AppointmentModel.save(newAppointment);
-    return result;
-  } else throw new Error(`Faltan datos`);
+    const findUser: User | null = await UserRepo.findUserByIdWithoutRelation(appointmentDATA.userId);
+    if (findUser) {
+      const newAppointment: Appointment = await AppRepo.createNewAppointment(findUser, appointmentDATA)
+      return newAppointment;
+    } else return null
+  } else return null;
 
-  //! LOGICA PARA DB LOCAL
-  /*
+  /* //! LOGICA PARA DB LOCAL
   const newAppointment: IAppointment = {
     id:getId(),
     userId: appointmentDATA.userId,
@@ -78,13 +62,10 @@ export const createAppointmentSVC = async (
 };
 
 export const cancelAppointmentSVC = async (id: number): Promise<void> => {
-  const findAppointment: Appointment | null = await AppointmentModel.findOne({
-    where: { id },
-    relations: { user: true },
-  });
+  const findAppointment: Appointment | null = await AppRepo.appointmentById(id);
   if (findAppointment) {
     findAppointment.status = appointmentsStatus.CANCELLED;
-    await AppointmentModel.save(findAppointment);
+    await AppRepo.save(findAppointment);
     console.log("se guardaron los cambios");
     
   } else throw new Error(`Turno no encontrado`);
@@ -95,8 +76,7 @@ export const cancelAppointmentSVC = async (id: number): Promise<void> => {
   // if (findAppointment) findAppointment.status = appointmentsStatus.CANCEL
   // else throw new Error(`No existe el turno que decea cancelar`);
 
-  //! LOGICA PARA DB LOCAL
-  /*
+  /* //! LOGICA PARA DB LOCAL
   const findAppointment = appointmentsDB.find((appointment) => {
     return appointment.id === id;
   });

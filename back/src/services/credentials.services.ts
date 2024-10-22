@@ -7,18 +7,13 @@
 //todo     - usuario existe entre los datos disponibles y, si es así, si el password es correcto. En caso de 
 //todo     - que la validación sea exitosa, deberá retornar el ID de las credenciales.
 
-import { CredentialModel } from "../config/data-source";
 import { Credential } from "../entities/Credential";
-import { CredentialDTO } from "../interfaces/dto/CredentialDTO";
+import { CredRepo } from "../repositories/CredentialRepository";
 // import { credentialDB, getId, incrementId } from "../utils/DB_CREDENTIAL";
 // import ICredential from "../interfaces/ICredential";
 
-export const createCredential = async (username: string, password:string): Promise<Credential> => {
-  const newCredential: Credential = CredentialModel.create({
-    username,
-    password
-  });
-  const result = await CredentialModel.save(newCredential);
+export const createCredentialSVC = async (username: string, password:string): Promise<Credential> => {
+  const result = await CredRepo.createCredential(username, password);
   return result;
   
   /* //! LOGICA PARA LA DB LOCAL
@@ -33,18 +28,10 @@ export const createCredential = async (username: string, password:string): Promi
   */
 };
 
-export const checkCredential = async (credentialDATA: CredentialDTO): Promise<number> => {
-  const foundCredential = await CredentialModel.findOne({
-    where: { username: credentialDATA.username }
-  })
-  if (foundCredential) {
-    if (foundCredential.password == credentialDATA.password) {
-      return foundCredential.id
-    }
-    else throw new Error ("Las contraseñas no concuerdan");
-  }
-  else throw new Error("No se encontro un usuario con esas credenciales");
-  
+export const checkCredentialSVC = async (username: string, password: string): Promise<number> => {
+  const result = await CredRepo.checkCredential(username, password);
+  return result;
+
   /*  //! LOGICA PARA BD LOCAL
   const credentialFound = credentialDB.find(
     (credential) => credentialDATA.username === credential.username

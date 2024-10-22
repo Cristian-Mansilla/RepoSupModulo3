@@ -1,7 +1,4 @@
 import { DataSource } from "typeorm";
-import { User } from "../entities/User";
-import { Credential } from "../entities/Credential";
-import { Appointment } from "../entities/Appointment";
 import {
   DB_DATABASE,
   DB_HOST,
@@ -17,7 +14,7 @@ export const AppDataSource = new DataSource({
   username: DB_USERNAME,
   password: DB_PASSWORD,
   database: DB_DATABASE,
-//   dropSchema: true,
+  // dropSchema: true,
   synchronize: true,
   logging: false,
   entities: ["src/entities/*.ts"],
@@ -34,7 +31,3 @@ export const connectDatabase = async () => {
     console.log(error);
   }
 };
-
-export const UserModel = AppDataSource.getRepository(User);
-export const CredentialModel = AppDataSource.getRepository(Credential);
-export const AppointmentModel = AppDataSource.getRepository(Appointment);

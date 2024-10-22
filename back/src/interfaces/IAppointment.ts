@@ -11,7 +11,6 @@
 export default interface IAppointment {
   id: number;
   userId: number;
-  service: string;
   date: Date;
   time: number;
   status: appointmentsStatus;

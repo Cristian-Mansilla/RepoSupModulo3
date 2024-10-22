@@ -17,10 +17,8 @@ export const getUsers = async (
     const users: User[] = await getUsersSVC();
     return res.status(200).json(users);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
-      message: "Ups... ocurrio un problema al obtener una lista de usuarios",
-      error,
+      error
     });
   }
 };
@@ -31,12 +29,12 @@ export const registerUser = async (
 ): Promise<Response> => {
   try {
     const { name, email, birthdate, nDni, username, password } = req.body;
-    const newUser: User = await registerUserSVC({ name, email, birthdate, nDni, username, password });
-    return res.status(201).json(newUser);
+    const newUser: User | null = await registerUserSVC({ name, email, birthdate, nDni, username, password });
+    return newUser
+    ? res.status(201).json(newUser)
+    : res.status(400).json({ message: "Faltan datos." })
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
-      message: "Ups, algo salio mal durante la creacion de un nuevo usuario",
       error,
     });
   }
@@ -48,14 +46,13 @@ export const deleteUserById = async (
 ): Promise<Response> => {
   try {
     const id = Number(req.params.id);
-    await deleteUserByIdSVC(id);
-    return res.status(201).json({
-      message: `Se elimino correctamente el usuario con id: ${id}`
-    });
+    const user = await deleteUserByIdSVC(id);
+    return user
+    ? res.status(201).json({message: `Se elimino correctamente el usuario con id: ${id}`})
+    : res.status(404).json({message: `No se encontro ningun usuario bajo el id ${id}`})
   } catch (error) {
     return res.status(500).json({
-      message: "No se encontro dicho usuario",
-      error: (error as Error).message
+      error
     });
   }
 };
@@ -64,14 +61,25 @@ export const getUserById = async (req: Request, res: Response): Promise<Response
   try {
     const id = Number(req.params.id);
     const user: User | null = await getUserByIdSVC(id);
-    return res.status(200).json(user);
+    return user 
+    ? res.status(200).json(user)
+    : res.status(404).json({ message: `Usuario con id ${id} no existe.` })
   }
   catch (error) {
     return res.status(500).json({
-        message: "Ocurrio un problema al buscar al usuario solicitado",
-        error: (error as Error).message
+        error
     })
   }
 };
 
-export const login = async () => {};
+export const login = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const { username, password } = req.body;
+    const userLogin = await loginSVC(username, password);
+    return res.status(200).json(userLogin)
+  } catch (error) {
+    return res.status(500).json({
+      error
+    })
+  }
+};

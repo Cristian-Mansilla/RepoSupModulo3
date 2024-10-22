@@ -9,11 +9,11 @@ export const getsAppointments = async (
 ): Promise<Response> => {
   try {
     const appointments: Appointment[] = await getAllAppointmentsSVC();  
-    return res.status(200).json(appointments);
+    console.log(!appointments)
+    return res.status(200).json(appointments)
   } catch (error) {
-    return res.status(404).json({
-      message: "❌ No se encontro ningun turno agendado.",
-      error,
+    return res.status(500).json({
+      error
     });
   }
 };
@@ -21,11 +21,12 @@ export const getsAppointments = async (
 export const getAppointmentById = async (req: Request, res: Response): Promise<Response> => {
   const id = Number(req.params.id);
   try {
-    const appointment: Appointment = await getAppointmentByIdSVC(id);
-    return res.status(200).json(appointment);
+    const appointment: Appointment | null = await getAppointmentByIdSVC(id);
+    return appointment
+    ? res.status(200).json(appointment)
+    : res.status(404).json({message:`❌ No se encontro el turno ${id}`})
   } catch (error) {
-    return res.status(400).json({
-      message: `❌ No se encontro el turno para el usuario de id ${id}, asegurese de que el usuario se encuentre creado primero`,
+    return res.status(500).json({
       error
     })
   }
@@ -33,13 +34,14 @@ export const getAppointmentById = async (req: Request, res: Response): Promise<R
 
 export const createdAppointment = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { userId, service, date, time } = req.body;
-    const newAppointment: Appointment = await createAppointmentSVC({userId, service, date, time})
-    return res.status(201).json(newAppointment);
+    const { userId, date, time } = req.body;
+    const newAppointment: Appointment | null = await createAppointmentSVC({userId, date, time})
+    return newAppointment 
+    ? res.status(201).json(newAppointment)
+    : res.status(400).json({message:"❌ No se pudo agendar el turno solicitado"})
   } catch (error) {
-    return res.status(400).json({
-      message:"❌ No se pudo agendar el turno solicitado",
-      error: (error as Error).message
+    return res.status(500).json({
+      error
     })
   }
 };

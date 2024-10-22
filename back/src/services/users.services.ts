@@ -10,24 +10,23 @@
 //todo     - a la función correspondiente del servicio de credenciales. Al recibir de esta función el id de
 //todo     - las credenciales, debe guardar el dato en la propiedad credentialsId.
 
-import { CredentialModel, UserModel } from "../config/data-source";
-import { User } from "../entities/User";
 import UserDTO from "../interfaces/dto/UserDTO";
-import { createCredential } from "./credentials.services";
+import { User } from "../entities/User";
+import { UserRepo } from "../repositories/UserRepository";
+import { checkCredentialSVC } from "./credentials.services";
 // import IUser from "../interfaces/IUser";
 // import { usersDB, getId, incrementId } from "../utils/DB_USER";
 
 //! servicio para obtener todos los usuarios con sus credenciales
 export const getUsersSVC = async (): Promise<User[]> => {
-  const users: User[] = await UserModel.find({
-    relations: { credential: true, appointments: true }
-  });
+  const users = await UserRepo.allUsers();
   return users;
 };
 
 export const registerUserSVC = async (
   userData: UserDTO
-): Promise<User> => {
+): Promise<User | null> => {
+  //TODO podria ser un middleware?
   if (
     userData.name ||
     userData.email ||
@@ -36,20 +35,9 @@ export const registerUserSVC = async (
     userData.username ||
     userData.password
   ) {
-    const newCredential = await createCredential(userData.username, userData.password);
-    const newUser: User = UserModel.create({
-      name: userData.name,
-      email: userData.email,
-      active: true,
-      nDni: Number(userData.nDni),
-      birthdate: new Date(userData.birthdate),
-      credential: newCredential
-    });
-    newCredential.user = newUser; // Implica que la tabla Credential en su columna "user" guarde la relacion con el nuevo usuario creado
-    await CredentialModel.save(newCredential);
-    const result = await UserModel.save(newUser);
-    return result;
-  } else throw new Error (`Faltan datos`);
+    const newUser: User = await UserRepo.registerUser(userData);
+    return newUser;
+  } else return null;
 
   /* //! LOGICA PARA LA BD LOCAL
   const newUser: IUser = {
@@ -67,11 +55,10 @@ export const registerUserSVC = async (
   */
 };
 
-export const deleteUserByIdSVC = async (id: number): Promise<void> => {
-  const findUser = await UserModel.findOneBy({ id });
-  if( findUser ) await UserModel.remove(findUser)
-  else throw new Error (`El usuario que quiere borrar no se encuentra`);
-  
+export const deleteUserByIdSVC = async (id: number): Promise<boolean> => {
+  const res = await UserRepo.deleteUser(id);
+  return res;
+
   /* //! LOGICA PARA DB LOCAL
   const userIndex = usersDB.findIndex((user: IUser) => user.id === id);    //findIndex busca el primer indice que tenga un id que cohincida con la propiedad id de un usuario  
   if (userIndex !== -1) {                                                   //si lo encontro retorna la posicion que ocupa el usuario en el array, sino retorna -1 y se lanza un error
@@ -84,12 +71,8 @@ export const deleteUserByIdSVC = async (id: number): Promise<void> => {
 };
 
 export const getUserByIdSVC = async (id: number): Promise<User | null> => {
-  const user: User | null = await UserModel.findOne({
-    where: {id},
-    relations: { credential: true, appointments: true } // otra forma: relations: ["appointments"];
-  });
-  if (!user) throw new Error(`Usuario con id ${id} no encontrado`);
-  return user;
+  const res = await UserRepo.findUserById(id);
+  return res;
 
   /* //! LOGICA PARA DB LOCAL
   const user = usersDB.find((user: IUser) => {
@@ -101,4 +84,7 @@ export const getUserByIdSVC = async (id: number): Promise<User | null> => {
   */
 };
 
-export const loginSVC = async () => {};
+export const loginSVC = async (username: string, password: string): Promise<number> => {
+  const result = await checkCredentialSVC(username, password);
+  return result;
+};

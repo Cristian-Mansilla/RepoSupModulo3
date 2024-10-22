@@ -6,8 +6,6 @@ import { User } from "./User";
 export class Appointment {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
-  service: string;
   @Column({ type: "date" })
   date: Date;
   @Column()
