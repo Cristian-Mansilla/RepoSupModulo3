@@ -1,0 +1,52 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    /* height: 100%; */
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.87);
+  }
+  
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+  
+  button, input, select, textarea {
+    font: inherit;
+    color: inherit;
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  ul, ol {
+    list-style: none;
+  }
+  
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  
+  blockquote, q {
+    quotes: none;
+  }
+  
+  blockquote::before, blockquote::after,
+  q::before, q::after {
+    content: '';
+  }
+  
+  hr {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+  }
