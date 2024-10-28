@@ -11,15 +11,30 @@ Appointment.propTypes = {
     status: PropTypes.string.isRequired,
   };
 */
+import style from "../styles/Appointment.module.css";
 
-export const Appointment = ({ id, date, time, status }) => {
+export const Appointment = ({ id, date, time, status, handleCancelAppointment }) => {
+  
+  const cancelarTurno = () => {
+    handleCancelAppointment(id)
+  }
+
+  const random = () => {
+    let trow = Math.round(Math.random()*1);
+    console.log(trow)
+    return (trow == 0)? "🤕":"🤒";
+  }
+
   return (
-    <>
-      <h3>Turno</h3>
-      <p>{id}</p>
-      <p>{date}</p>
-      <p>{time}</p>
+    <div className={style.patients}>
+      <h3>Paciente: {random()}</h3>
+      <p>Id: {id}</p>
+      <p>Fecha: {date}</p>
+      <p>Hora: {time}</p>
       <p>{status}</p>
-    </>
+      <div>
+        <button onClick={cancelarTurno} className={style.btn_cancel}>Cancelar</button>
+      </div>
+    </div>
   );
 };
