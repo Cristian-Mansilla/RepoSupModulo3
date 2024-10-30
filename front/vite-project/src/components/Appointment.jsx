@@ -13,7 +13,7 @@ Appointment.propTypes = {
 */
 import style from "../styles/Appointment.module.css";
 
-export const Appointment = ({ id, date, time, status, handleCancelAppointment }) => {
+export const Appointment = ({ id, date, time, status, handleCancelAppointment, handleBtnCancelActive }) => {
   
   const cancelarTurno = () => {
     handleCancelAppointment(id)
@@ -21,19 +21,19 @@ export const Appointment = ({ id, date, time, status, handleCancelAppointment })
 
   const random = () => {
     let trow = Math.round(Math.random()*1);
-    console.log(trow)
+    // console.log(trow)
     return (trow == 0)? "🤕":"🤒";
   }
 
   return (
     <div className={style.patients}>
-      <h3>Paciente: {random()}</h3>
-      <p>Id: {id}</p>
-      <p>Fecha: {date}</p>
-      <p>Hora: {time}</p>
-      <p>{status}</p>
+      <h3>{random()} Paciente:</h3>
+      <p>🗝️Id: {id}</p>
+      <p>🗓️Fecha: {date}</p>
+      <p>🕑Hora: {time}</p>
+      <p className={style[status]}>{status.toUpperCase()}</p>
       <div>
-        <button onClick={cancelarTurno} className={style.btn_cancel}>Cancelar</button>
+        <button disabled={status=="cancelled"} onClick={cancelarTurno} className={style[status]}>Cancelar</button>
       </div>
     </div>
   );

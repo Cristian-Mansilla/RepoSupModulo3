@@ -2,6 +2,8 @@
     width: 90vw;
     margin: auto;
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
 }
 .title{
     color: #646cff;
@@ -9,11 +11,25 @@
 }
 .patients{
     display: flex;
-    gap: 20px;
+    justify-content: space-around;
     margin-bottom: 8px;
     font-size: 130%;
+    border: solid 2px black;
+    padding: 6px 0px 6px 0px;
+    transition: ease 1s;
 }
-.btn_cancel{
+.patients:hover{
+    background-color: #646cff87;
+}
+p.active{
+    color: greenyellow;
+    width: 110px;
+}
+p.cancelled{
+    color: red;
+    width: 110px;
+}
+button.active{
     background-color: #242424;
     border-radius: 7px;
     width: 90px;
@@ -22,6 +38,15 @@
     transition: .5s ease;
     padding: 2px;
 }
-.btn_cancel:hover {
+button.active:hover {
     box-shadow: 20px 20px 50px 10px  #535bf2 inset;
+}
+button.cancelled {
+    background-color: #242424;
+    border-radius: 7px;
+    width: 90px;
+    border: 2px solid  #6a6a6a;
+    transition: .5s ease;
+    padding: 2px;
+    color: #6a6a6a;
 }
