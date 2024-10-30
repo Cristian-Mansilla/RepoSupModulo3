@@ -13,7 +13,7 @@ const router : Router = Router();
 
 router.get("/", getUsers);          //? las rutas estaticas o especificas van al principio
 
-router.get("/:id", auth, getUserById);    //? las rutas dinamicas o menos especificas van al final de la lista de metodos
+router.get("/:id", getUserById);    //? las rutas dinamicas o menos especificas van al final de la lista de metodos
 
 router.delete("/:id", deleteUserById);
 

@@ -6,38 +6,49 @@ import axios from "axios";
 
 export const MisTurnos = () => {
   //? ESTADOS
-  const [btnCancelActive, setBtnCancelActive] = useState(false)
   // PARA GUARDAR LOS TURNOS EN UN ESTADO
   const [turnos, setTurnos] = useState([]); 
   const [id, setId] = useState(0);
-  console.log(turnos);
+  const [updatePage, setUpdatePage] = useState(false);
+  // console.log(turnos);
 
-  // MONTAJE PARA HACER UNA PETICION AL BACK
+  // MONTAJE PARA HACER UNA PETICION AL SERVIDOR
   useEffect(() => {
-    //! AXIOS
-    axios.get("http://localhost:4040/appointments")
-    .then((res) => setTurnos(res.data))
+    //! AXIOS CON PROMESAS CON LOS TURNOS DE UN USUARIO EN PARTICULAR
+    ;( async() => {
+      await axios.get("http://localhost:4040/users/6")
+      .then((res) => {
+        console.log(res.data)
+        setTurnos(res.data)
+      })
+      .catch((error) => {
+        console.log(error)
+        alert(error.response.data.message)
+      })
+    })();
 
-    //! FETCH
+    //! FETCH CON TODOS LOS TURNOS
     // fetch("http://localhost:4040/appointments")
     // .then((response) => response.json())
     // .then((data) => setTurnos(data))
-  }, []);
+  }, [updatePage]);
 
-  const handleBtnCancelActive = () => {
-    setBtnCancelActive(true);
-  };
-
-  const handleCancelAppointment = (id) => {
-    setId(id);  // ATRAPO EL ID DEL TURNO QUE QUIERO CANCELAR
-    console.log(`Turno ${id} cancelado!`)
+  const handleCancelAppointment = async(id) => {
+    try {
+      setId(id);  // ATRAPO EL ID DEL TURNO QUE QUIERO CANCELAR
+      await axios.put(`http://localhost:4040/appointments/cancel/${id}`);
+      setUpdatePage(!updatePage)
+      console.log(`Turno ${id} cancelado!`);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
     <div className={style.container}>
       <h1 className={style.title}>Mis Turnos</h1>
       <div className={style.container}>
-        {turnos.map((turno) => {
+        {turnos?.appointments?.map((turno) => {
           return (
             <Appointment
               key={turno.id}
@@ -46,7 +57,6 @@ export const MisTurnos = () => {
               time={turno.time}
               status={turno.status}
               handleCancelAppointment={handleCancelAppointment}
-              handleBtnCancelActive={handleBtnCancelActive}
             />
           );
         })}

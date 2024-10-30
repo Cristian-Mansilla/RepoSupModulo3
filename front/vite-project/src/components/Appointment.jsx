@@ -13,7 +13,7 @@ Appointment.propTypes = {
 */
 import style from "../styles/Appointment.module.css";
 
-export const Appointment = ({ id, date, time, status, handleCancelAppointment, handleBtnCancelActive }) => {
+export const Appointment = ({ id, date, time, status, handleCancelAppointment }) => {
   
   const cancelarTurno = () => {
     handleCancelAppointment(id)
