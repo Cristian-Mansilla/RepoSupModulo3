@@ -1,0 +1,16 @@
+.container{
+    display: flex;
+    width: 90vw;
+    margin: 0px auto;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+}
+input{
+    color: black;
+    margin: 10px 0px;
+}
+.btnSubmit{
+    color: black;
+    margin: 10px 0px;
+}

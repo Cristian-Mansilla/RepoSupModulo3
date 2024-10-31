@@ -31,6 +31,8 @@ export const MisTurnos = () => {
     // fetch("http://localhost:4040/appointments")
     // .then((response) => response.json())
     // .then((data) => setTurnos(data))
+
+    return () => setTurnos([]); // LIMPIO EL ESTADO DEL COMPONENTE CUANDO SALGO DE LA APP
   }, [updatePage]);
 
   const handleCancelAppointment = async(id) => {
